@@ -1193,11 +1193,13 @@ class ProactiveChatPlugin(star.Star):
             return
 
         session_id = event.unified_msg_origin
-        
+
         # 缓存 self_id
         if event.get_self_id():
             async with self.data_lock:
-                 self.session_data.setdefault(session_id, {})["self_id"] = event.get_self_id()
+                self.session_data.setdefault(session_id, {})["self_id"] = (
+                    event.get_self_id()
+                )
 
         # 记录消息时间并取消自动触发
         # 只记录插件启动后的消息时间，用于自动触发功能
@@ -1255,11 +1257,13 @@ class ProactiveChatPlugin(star.Star):
             return
 
         session_id = event.unified_msg_origin
-        
+
         # 缓存 self_id
         if event.get_self_id():
             async with self.data_lock:
-                 self.session_data.setdefault(session_id, {})["self_id"] = event.get_self_id()
+                self.session_data.setdefault(session_id, {})["self_id"] = (
+                    event.get_self_id()
+                )
 
         # 使用会话隔离的状态管理，避免竞态条件
         current_time = time.time()
@@ -1711,9 +1715,7 @@ class ProactiveChatPlugin(star.Star):
 
         return random.uniform(interval[0], interval[1])
 
-    async def _trigger_decorating_hooks(
-        self, session_id: str, chain: list
-    ) -> list:
+    async def _trigger_decorating_hooks(self, session_id: str, chain: list) -> list:
         """
         触发 OnDecoratingResultEvent 钩子，让其他插件（如文本转语音、尾巴等）有机会处理消息。
         构造一个伪造的 AstrMessageEvent 来模拟消息处理流程。
@@ -1756,12 +1758,14 @@ class ProactiveChatPlugin(star.Star):
         # 尝试获取已知的 self_id，如果获取不到则使用占位符
         # 这里使用 session_data 中缓存的 self_id (如果在 on_message 中保存了)
         # 或者使用默认值
-        message_obj.self_id = self.session_data.get(session_id, {}).get("self_id", "bot")
-        
+        message_obj.self_id = self.session_data.get(session_id, {}).get(
+            "self_id", "bot"
+        )
+
         # 将发送者设为目标用户，模拟是用户发来的消息触发了回复（虽然这是主动消息）
         # 这样有助于一些依赖 sender 信息的装饰器正常工作
         message_obj.sender = MessageMember(user_id=target_id)
-        
+
         # 补全其他可能被访问的属性，防止 AttributeError
         message_obj.message_str = ""
         message_obj.raw_message = None
@@ -1788,7 +1792,9 @@ class ProactiveChatPlugin(star.Star):
             try:
                 await handler.handler(event)
             except Exception as e:
-                logger.error(f"[主动消息] 执行装饰钩子 {handler.handler_name} 失败: {e}")
+                logger.error(
+                    f"[主动消息] 执行装饰钩子 {handler.handler_name} 失败: {e}"
+                )
 
         # 7. 返回结果
         # 必须尊重 event.get_result()，如果装饰器清空了 chain（意图拦截），我们应该返回空列表
@@ -1802,13 +1808,11 @@ class ProactiveChatPlugin(star.Star):
         processed_chain_list = await self._trigger_decorating_hooks(
             session_id, components
         )
-        
+
         if not processed_chain_list:
             return
 
-        await self.context.send_message(
-            session_id, MessageChain(processed_chain_list)
-        )
+        await self.context.send_message(session_id, MessageChain(processed_chain_list))
 
     async def _send_proactive_message(self, session_id: str, text: str):
         """
