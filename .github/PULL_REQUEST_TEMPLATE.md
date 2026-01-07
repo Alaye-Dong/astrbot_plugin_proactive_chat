@@ -1,24 +1,23 @@
-## 📝 Description / 描述
+## 📝 描述 / Description
 
-<!--Please describe the motivation for this change: What problem does it solve? (e.g., Fixes XX issue, adds YY feature)-->
 <!--请描述此项更改的动机：它解决了什么问题？（例如：修复了 XX issue，添加了 YY 功能）-->
+<!--Please describe the motivation for this change: What problem does it solve? (e.g., Fixes XX issue, adds YY feature)-->
 
-### 🛠️ Modifications / 改动点
+## 🛠️ 改动点 / Modifications
 
-<!--Please summarize your changes: What core files were modified? What functionality was implemented?-->
 <!--请总结你的改动：哪些核心文件被修改了？实现了什么功能？-->
+<!--Please summarize your changes: What core files were modified? What functionality was implemented?-->
 
-- [ ] This is NOT a breaking change. / 这不是一个破坏性变更。
-<!-- If your changes is not a breaking change, please check the checkbox above (put an 'x' inside the brackets) -->
+- [ ] 这**不是**一个破坏性变更 / This is NOT a breaking change.
+<!-- 如果你的更改不是一个破坏性更改，请在检查框内打“x” -->
+<!-- If your changes are NOT a breaking change, please check the checkbox above (put an 'x' inside the brackets) -->
 
-### 📸 Screenshots or Test Results / 运行截图或测试结果
+## 📸 运行截图或测试结果 / Screenshots or Test Results
 
-<!--Please paste screenshots, GIFs, or test logs here as evidence to prove this change is effective.-->
 <!--请粘贴截图、GIF 或测试日志，作为证据证明此改动有效。-->
+<!--Please paste screenshots, GIFs, or test logs here as evidence to prove this change is effective.-->
 
----
-
-### ✅ Checklist / 检查清单
+## ✅ 检查清单 / Checklist
 
 <!--If merged, your code will be part of this plugin! Please double-check the following items before submitting.-->
 <!--如果分支被合并，您的代码将成为本插件的一部分！在提交前，请核查以下几点内容。-->
