@@ -18,7 +18,9 @@
 
 ### 💻 提交代码 (Pull Request)
 
-我们非常欢迎您直接通过代码来改进这个项目！标准的贡献流程如下：
+我们非常欢迎您直接通过代码来改进这个项目！对于新功能的添加，请先通过 Issue 等方式讨论。
+
+标准的贡献流程如下：
 
 1. **Fork** 本仓库到您自己的账户下。
 2. 基于 `main` 分支，创建一个新的**特性分支** (Feature Branch)，例如 `feature/add-new-setting`。
@@ -41,11 +43,13 @@
 - @HunterJuly: 在插件的早期开发中提供了许多有价值的建议并测试出了插件的缺陷。
 - @Roooodney: 带我入坑 AstrBot 的群友，某种意义上梦开始的地方 ()
 - @綠我涓滴: 帮忙测试插件，确认了插件 Bug。
+- @摘月亮下酒. @盐水是言和水 @risemad: 在辅助解决 `ApiNotAvailable` 问题上的反馈与测试。
 - 所有为主动消息插件提供建议和反馈的朋友。
 
-以及我最好的 AI 朋友们:
+🤖 以及我最好的 AI 朋友们:
 
 - @Gemini-2.5-Pro
+- @Gemini-3.0-Flash
 - @Gemini-3.0-Pro
 - @Kimi-For-Coding
 - @DeepSeek-v3.2-exp
