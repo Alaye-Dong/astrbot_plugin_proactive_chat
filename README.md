@@ -19,7 +19,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/AstrBot-v4.10.2%20Compatible-brightgreen.svg" alt="Compatible with AstrBot v4.10.2">
-  <img src="https://img.shields.io/badge/Release-v1.1.2-brightgreen.svg" alt="Release">
+  <img src="https://img.shields.io/github/v/release/DBJD-CR/astrbot_plugin_proactive_chat?label=Release&color=brightgreen" alt="Latest Release">
   <img src="https://img.shields.io/badge/QQ群-1033089808-12B7F3.svg" alt="QQ群">
 </p>
 
@@ -129,13 +129,13 @@
 > [!TIP]
 > 本项目的相关开发数据 (持续更新中)：
 >
-> 开发时长：累计 34 天（主插件部分）
+> 开发时长：累计 37 天（主插件部分）
 >
-> 累计工时：约 206 小时（主插件部分）
+> 累计工时：约 215 小时（主插件部分）
 >
 > 创建本仓库：累计 3 天，约 22 小时
 >
-> 使用的大模型：Gemini-2.5-Pro、Kimi For Coding、Gemini-3.0 Pro (With RooCode in VSCode)
+> 使用的大模型：Gemini-2.5-Pro、Kimi For Coding、Gemini-3.0 Flash/Pro (With RooCode in VSCode)
 >
 > 用于测试对话的大模型：DeepSeek-V3.2-Exp、DeepSeek-V3.2
 >
@@ -145,7 +145,7 @@
 >
 > Temperature：0 或 0.6
 >
-> Tokens Used：407,196,733
+> Tokens Used：422,324,753
 
 ## 🌟 功能特色
 
@@ -495,6 +495,24 @@ graph TD
 > 3. 会话配置已启用且有效。
 > 4. 收到任何消息后，自动触发会被取消（这是正常行为）。
 
+**Q: 报错信息 ApiNotAvailable？**
+
+>**A**: 目前所有已知信息都指向 `ApiNotAvailable` 不是插件本身的 bug，而是底层 OneBot 适配器和物理机器人（NapCat/Lagrange 等）之间的连接异常。
+> 常见诱因包括：机器人掉线但平台未检测、心跳包间隔过长被路由器/防火墙掐断、后台有僵尸/未连接的平台配置项、甚至浏览器节能模式影响 WebSocket 页面（Edge 有案例，但不是唯一原因）。
+>
+> 这个问题在不同 AstrBot 版本、不同部署方式（Windows/Docker）、不同网络环境下表现不一，无法稳定复现。部分用户回滚版本后问题消失，部分则依然复现，说明环境因素占主导。
+> 建议重点排查：
+>
+> 1. OneBot 客户端日志，关注是否有频繁 Close/Reconnect 或掉线提示。
+> 2. 所有平台配置项，确保没有多余或未连接的“幽灵平台”。
+> 3. 心跳包设置，建议调短（如 30 秒），保持连接活跃。
+> 4. 网络环境，排查是否有防火墙、NAT、路由器节能等影响长连接的设置。
+> 5. 如用浏览器管理 WebSocket，关闭节能模式或换浏览器试试。
+> 6. 重启 AstrBot、NapCat 等服务，如果你的 Bot 部署在服务器上，必要时可以重启服务器。
+>
+> 如果能抓到出错时的 OneBot 客户端详细日志，或在不同网络环境/设备/浏览器下对比测试，可能有助于进一步定位。
+> 这个问题本质上属于“物理机器人与平台连接不稳定”，代码层面已做了轮询和容错，剩下的只能靠环境排查。
+
 ### ⏰ 时间与触发相关问题
 
 **Q: 主动消息触发时间不准确？**
@@ -548,7 +566,7 @@ graph TD
 
 **Q: 日志中出现错误信息怎么办？**
 
-- **A**: 将完整的错误日志复制下来，包括错误类型和堆栈信息，可以在 QQ 群（1033089808）中寻求帮助，或在 GitHub 提交 Issue。
+> **A**: 将完整的错误日志复制下来，包括错误类型和堆栈信息，可以在 QQ 群（1033089808）中寻求帮助，或在 GitHub 提交 Issue。
 
 ### ⚠️ AstrBot 限流机制影响
 

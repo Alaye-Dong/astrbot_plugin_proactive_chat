@@ -35,7 +35,14 @@ from astrbot.core.message.components import Plain, Record
 from astrbot.core.message.message_event_result import MessageChain, MessageEventResult
 from astrbot.core.platform.astrbot_message import AstrBotMessage, Group, MessageMember
 from astrbot.core.platform.message_type import MessageType
+from astrbot.core.platform.platform import PlatformStatus
 from astrbot.core.star.star_handler import EventType, star_handlers_registry
+
+# 尝试兼容性导入 MessageSession，用于跨平台发送
+try:
+    from astrbot.core.platform.astr_message_event import MessageSesion as MS
+except ImportError:
+    from astrbot.core.platform.message_session import MessageSession as MS
 
 # --- 插件主类 ---
 
@@ -119,15 +126,10 @@ class ProactiveChatPlugin(star.Star):
                 # 获取锚点之后的部分
                 after_type = session_id[idx + len(search_pattern) :]
 
-                # 处理 Satori 等 4 段式 ID: Platform:MsgType:SubType:TargetID
-                # 如果剩余部分还包含冒号，我们假设最后一部分才是真正的 TargetID
-                if ":" in after_type:
-                    # 取最后一个冒号后的部分作为 TargetID，丢弃中间的 SubType
-                    target_id = after_type.split(":")[-1]
-                    return platform, msg_type, target_id
-                else:
-                    target_id = after_type
-                    return platform, msg_type, target_id
+                # 处理 Satori 等多段式 ID: Platform:MsgType:SubType:TargetID
+                # 必须保留 SubType 信息，MessageSession 才能正确路由喵！
+                # 我们将 MsgType 之后的所有部分都视为 target_id
+                return platform, msg_type, after_type
 
         # 2. 如果没找到标准类型，尝试简单的 3 段式解析
         parts = session_id.split(":")
@@ -888,15 +890,8 @@ class ProactiveChatPlugin(star.Star):
             )
             return 0
 
-        # 使用指定格式的会话ID，但需要先确定平台名称
-        platform_name = "default"
-        for existing_session_id in self.session_data.keys():
-            # 精确匹配，避免错误匹配到其他会话
-            if existing_session_id.endswith(f":{message_type}:{target_id}"):
-                platform_name = existing_session_id.split(":")[0]
-                break
-
-        session_id = f"{platform_name}:{message_type}:{target_id}"
+        # 优雅地获取完整的 UMO 喵
+        session_id = self._resolve_full_umo(target_id, message_type)
         logger.debug(f"[主动消息] 正在为 {log_str} 设置自动触发器喵。")
         # 在外层函数统一打印完整的日志信息，内层函数静默执行，避免重复
         auto_trigger_minutes = auto_trigger_settings.get(
@@ -908,6 +903,42 @@ class ProactiveChatPlugin(star.Star):
         )
         await self._setup_auto_trigger(session_id, silent=True)
         return 1
+
+    def _resolve_full_umo(self, target_id: str, msg_type: str) -> str:
+        """
+        动态解析并验证存活的 UMO 喵。
+        灵灵会优先确保返回的平台 ID 对应的实例当前处于运行状态。
+        """
+        type_keyword = (
+            "Friend" if "Friend" in msg_type or "Private" in msg_type else "Group"
+        )
+        # 获取所有活跃且不是 WebChat 的平台实例映射喵
+        active_insts = {
+            p.meta().id: p
+            for p in self.context.platform_manager.get_insts()
+            if p.meta().id and "webchat" not in p.meta().id.lower()
+        }
+
+        # 1. 优先从历史记录匹配，但必须验证平台依然“运行中”喵
+        for existing_id in self.session_data.keys():
+            if type_keyword in existing_id and existing_id.endswith(f":{target_id}"):
+                p_id = existing_id.split(":")[0]
+                if (
+                    p_id in active_insts
+                    and active_insts[p_id].status == PlatformStatus.RUNNING
+                ):
+                    return existing_id
+
+        # 2. 如果历史记录失效，从当前正在运行且健康的物理平台中推选喵
+        running_platforms = [
+            p for p in active_insts.values() if p.status == PlatformStatus.RUNNING
+        ]
+        if running_platforms:
+            return f"{running_platforms[0].meta().id}:{msg_type}:{target_id}"
+
+        # 3. 最后的保底措施喵
+        fallback_p_id = list(active_insts.keys())[0] if active_insts else "default"
+        return f"{fallback_p_id}:{msg_type}:{target_id}"
 
     def _get_session_config(self, session_id: str) -> dict | None:
         """
@@ -929,10 +960,10 @@ class ProactiveChatPlugin(star.Star):
         # 使用 _ 忽略 platform，因为此处只需要 message_type 和 target_id
         _, message_type, target_id = parsed
 
-        # 根据消息类型分别处理
-        if message_type == "FriendMessage":
+        # 根据消息类型分别处理，使用模糊匹配以支持不同平台的命名喵
+        if "Friend" in message_type or "Private" in message_type:
             return self._get_private_session_config(session_id, target_id)
-        elif message_type == "GroupMessage":
+        elif "Group" in message_type:
             return self._get_group_session_config(session_id, target_id)
 
         return None
@@ -951,8 +982,11 @@ class ProactiveChatPlugin(star.Star):
             "session_5",
         ]:
             session_config = private_sessions.get(session_key, {})
-            # 只要 session_id 匹配，就以此配置为准
-            if session_config.get("session_id", "") == target_id:
+            # 兼容多段式 ID：只要配置的 ID 是目标 ID 的一部分（通常是末尾）喵
+            config_id = str(session_config.get("session_id", ""))
+            if config_id and (
+                target_id == config_id or target_id.endswith(f":{config_id}")
+            ):
                 if session_config.get("enable", False):
                     # 添加会话名称到配置中，用于日志显示
                     config_copy = session_config.copy()
@@ -992,8 +1026,11 @@ class ProactiveChatPlugin(star.Star):
             "session_5",
         ]:
             session_config = group_sessions.get(session_key, {})
-            # 只要 session_id 匹配，就以此配置为准
-            if session_config.get("session_id", "") == target_id:
+            # 兼容多段式 ID：只要配置的 ID 是目标 ID 的一部分（通常是末尾）喵
+            config_id = str(session_config.get("session_id", ""))
+            if config_id and (
+                target_id == config_id or target_id.endswith(f":{config_id}")
+            ):
                 if session_config.get("enable", False):
                     # 添加会话名称到配置中，用于日志显示
                     config_copy = session_config.copy()
@@ -1228,7 +1265,7 @@ class ProactiveChatPlugin(star.Star):
 
         session_config = self._get_session_config(session_id)
         if not session_config or not session_config.get("enable", False):
-            logger.info(
+            logger.debug(
                 f"[主动消息] {self._get_session_log_str(session_id, session_config)} 未启用或配置无效，跳过处理喵。"
             )
             return
@@ -1504,27 +1541,45 @@ class ProactiveChatPlugin(star.Star):
 
     def _sanitize_history_content(self, history: list) -> list:
         """
-        清洗历史消息内容，将列表格式的内容转换为字符串。
-        修复 Gemini Source 的 ValidationError 问题。
+        清洗历史消息内容，确保所有内容均为纯文本字符串喵。
+        这可以防止某些 LLM 适配器在处理复杂对象（如 MessageSegment）时出现 JS 风格的 [object Object] 错误喵。
         """
         sanitized_history = []
         for msg in history:
-            if not isinstance(msg, dict):
-                sanitized_history.append(msg)
+            # 如果消息不是字典，尝试转换为字典或跳过
+            if hasattr(msg, "to_dict"):
+                msg_dict = msg.to_dict()
+            elif isinstance(msg, dict):
+                msg_dict = msg.copy()
+            else:
+                # 无法处理的格式，记录警告并跳过
+                logger.debug(
+                    f"[主动消息] 历史记录中发现无法识别的消息格式: {type(msg)}，已跳过喵。"
+                )
                 continue
 
-            new_msg = msg.copy()
-            content = msg.get("content")
+            content = msg_dict.get("content")
 
+            # 处理列表形式的内容（AstrBot 的多媒体消息格式）
             if isinstance(content, list):
-                # 拼接所有 text 类型的片段
                 text_content = ""
                 for segment in content:
-                    if isinstance(segment, dict) and segment.get("type") == "text":
-                        text_content += segment.get("text", "")
-                new_msg["content"] = text_content
+                    if isinstance(segment, dict):
+                        if segment.get("type") == "text":
+                            text_content += segment.get("text", "")
+                        # 目前只保留文本片段，忽略图片等其他片段以确保兼容性喵
+                    elif hasattr(segment, "text"):  # 处理 TextPart 等对象
+                        text_content += getattr(segment, "text", "")
+                    elif hasattr(segment, "get_text"):
+                        text_content += segment.get_text()
+                    elif isinstance(segment, str):
+                        text_content += segment
+                msg_dict["content"] = text_content
+            elif not isinstance(content, str):
+                # 强制转换为字符串，防止 [object Object] 泄露
+                msg_dict["content"] = str(content) if content is not None else ""
 
-            sanitized_history.append(new_msg)
+            sanitized_history.append(msg_dict)
         return sanitized_history
 
     async def _prepare_llm_request(self, session_id: str) -> dict | None:
@@ -1790,11 +1845,22 @@ class ProactiveChatPlugin(star.Star):
         )
         for handler in handlers:
             try:
+                logger.debug(
+                    f"[主动消息] 正在执行装饰钩子: {handler.handler_full_name} ({handler.handler_module_path}) 喵"
+                )
                 await handler.handler(event)
             except Exception as e:
+                # 记录详细的错误来源和类型，精准定位 ApiNotAvailable 喵！
+                error_type = type(e).__name__
                 logger.error(
-                    f"[主动消息] 执行装饰钩子 {handler.handler_name} 失败: {e}"
+                    f"[主动消息] 执行装饰钩子失败喵！来源: {handler.handler_full_name}, "
+                    f"错误类型: {error_type}, 错误详情: {e}"
                 )
+                # 这是一个极其显眼的标记喵
+                if "Available" in error_type:
+                    logger.error(
+                        f"[主动消息] 抓到可能导致 ApiNotAvailable 的嫌疑人喵！模块: {handler.handler_module_path}"
+                    )
 
         # 7. 返回结果
         # 必须尊重 event.get_result()，如果装饰器清空了 chain（意图拦截），我们应该返回空列表
@@ -1804,15 +1870,96 @@ class ProactiveChatPlugin(star.Star):
         return chain
 
     async def _send_chain_with_hooks(self, session_id: str, components: list):
-        """发送消息链，并先应用装饰钩子"""
+        """
+        发送消息链的终极防御逻辑喵。
+        针对 aiocqhttp 的 ApiNotAvailable 错误，增加了“同类平台安全轮询”机制喵。
+        """
         processed_chain_list = await self._trigger_decorating_hooks(
             session_id, components
         )
-
         if not processed_chain_list:
             return
 
-        await self.context.send_message(session_id, MessageChain(processed_chain_list))
+        chain = MessageChain(processed_chain_list)
+        parsed = self._parse_session_id(session_id)
+        if not parsed:
+            await self.context.send_message(session_id, chain)
+            return
+
+        p_id, m_type_str, t_id = parsed
+        m_type = (
+            MessageType.GROUP_MESSAGE
+            if "Group" in m_type_str
+            else MessageType.FRIEND_MESSAGE
+        )
+
+        # 🚀 灵灵的“铁壁轮询”策略喵！
+        platforms = self.context.platform_manager.get_insts()
+        preferred_p = next((p for p in platforms if p.meta().id == p_id), None)
+        # 获取首选平台的适配器类型 (如 aiocqhttp) 喵
+        adapter_type = preferred_p.meta().name if preferred_p else "unknown"
+
+        # 筛选同类、存活、且不是 WebChat 的备选平台喵
+        candidates = [
+            p
+            for p in platforms
+            if p.meta().name == adapter_type
+            and p.status == PlatformStatus.RUNNING
+            and "webchat" not in (p.meta().id or "").lower()
+        ]
+        # 首选平台排在第一位喵
+        candidates.sort(key=lambda p: 1 if p.meta().id == p_id else 2)
+
+        last_error = None
+        last_traceback = "无详细堆栈"
+
+        for platform in candidates:
+            curr_p_id = platform.meta().id
+            try:
+                session_obj = MS(
+                    platform_name=curr_p_id, message_type=m_type, session_id=t_id
+                )
+
+                # 针对 aiocqhttp 的连接预检喵
+                if adapter_type == "aiocqhttp":
+                    client = platform.get_client()
+                    # 如果 CQHttp 实例没有活跃的 WebSocket 客户端连接，提前预警喵
+                    if hasattr(client, "clients") and not client.clients:
+                        logger.warning(
+                            f"[主动消息] 预检：平台 {curr_p_id} 目前没有活跃的 WebSocket 客户端连接喵！"
+                        )
+
+                # 尝试通过此健康的平台实例进行发送喵
+                await platform.send_by_session(session_obj, chain)
+                logger.info(
+                    f"[主动消息] 消息将通过平台 {curr_p_id} ({adapter_type}) 送达喵"
+                )
+                return
+
+            except Exception as e:
+                last_error = e
+                last_traceback = (
+                    traceback.format_exc()
+                )  # 在这里捕获，防止在循环外失效喵
+                if "Available" in type(e).__name__:
+                    logger.warning(
+                        f"[主动消息] 平台 {curr_p_id} 暂时不可用 (ApiNotAvailable)，寻找同类替补中喵..."
+                    )
+                else:
+                    logger.debug(f"[主动消息] 尝试平台 {curr_p_id} 时遇到困难: {e} 喵")
+
+        # 最后保底：尝试核心 API 的一搏喵
+        try:
+            if await self.context.send_message(session_id, chain):
+                return
+        except Exception as e:
+            last_error = e
+            last_traceback = traceback.format_exc()
+
+        logger.error(
+            f"[主动消息] ❌ 严重故障：所有匹配的物理平台均不可用喵。异常堆栈:{last_traceback}"
+        )
+        raise last_error or RuntimeError("未找到可用的消息平台用于推送")
 
     async def _send_proactive_message(self, session_id: str, text: str):
         """
@@ -2060,8 +2207,17 @@ class ProactiveChatPlugin(star.Star):
                 f"[主动消息] 开始生成第 {unanswered_count + 1} 次主动消息喵，当前未回复次数: {unanswered_count} 次喵。"
             )
 
-            # 增加对非标准 session_id 的容错处理
-            # 某些平台（如 Satori）可能生成特殊格式的 ID，导致 AstrBot 核心 API 解包失败
+            # 在任务执行前，通过活跃平台实例和历史记录动态修正 ID，确保 UMO 的时效性和准确性喵
+            parsed = self._parse_session_id(session_id)
+            if parsed:
+                _, msg_type, target_id = parsed
+                new_session_id = self._resolve_full_umo(target_id, msg_type)
+                if new_session_id != session_id:
+                    logger.debug(
+                        f"[主动消息] UMO 动态修正: {session_id} -> {new_session_id} 喵"
+                    )
+                    session_id = new_session_id
+
             try:
                 request_package = await self._prepare_llm_request(session_id)
             except ValueError as e:
@@ -2119,40 +2275,19 @@ class ProactiveChatPlugin(star.Star):
                     session_id
                 )
 
-                # 尝试调用 LLM，添加针对 Gemini 格式错误的重试机制
-                try:
-                    # 使用统一的llm_generate接口调用LLM
-                    llm_response_obj = await self.context.llm_generate(
-                        chat_provider_id=provider_id,
-                        prompt=final_user_simulation_prompt,
-                        contexts=pure_history_messages,
-                        system_prompt=original_system_prompt,
-                    )
-                except Exception as e:
-                    # 检查是否为 Gemini 的 ValidationError
-                    # 错误特征：ValidationError, Input should be a valid string
-                    if (
-                        "validation error" in str(e).lower()
-                        and "valid string" in str(e).lower()
-                    ):
-                        logger.warning(
-                            "[主动消息] 检测到 Gemini 历史记录格式兼容性问题，尝试清洗数据后重试喵。"
-                        )
-                        # 清洗历史消息
-                        pure_history_messages = self._sanitize_history_content(
-                            pure_history_messages
-                        )
-                        # 使用清洗后的数据重试
-                        llm_response_obj = await self.context.llm_generate(
-                            chat_provider_id=provider_id,
-                            prompt=final_user_simulation_prompt,
-                            contexts=pure_history_messages,
-                            system_prompt=original_system_prompt,
-                        )
-                        logger.info("[主动消息] 数据清洗后重试成功喵。")
-                    else:
-                        # 其他错误直接抛出，进入外层异常处理
-                        raise e
+                # 优化：在调用 LLM 前始终清洗历史记录，确保兼容性喵！
+                # 这能有效防止某些适配器将对象误转为 [object Object] 字符串喵。
+                pure_history_messages = self._sanitize_history_content(
+                    pure_history_messages
+                )
+
+                # 使用统一的llm_generate接口调用LLM
+                llm_response_obj = await self.context.llm_generate(
+                    chat_provider_id=provider_id,
+                    prompt=final_user_simulation_prompt,
+                    contexts=pure_history_messages,
+                    system_prompt=original_system_prompt,
+                )
 
                 logger.info("[主动消息] 使用新API调用LLM成功喵。")
 
@@ -2192,6 +2327,19 @@ class ProactiveChatPlugin(star.Star):
 
             if llm_response_obj and llm_response_obj.completion_text:
                 response_text = llm_response_obj.completion_text.strip()
+
+                # 灵灵的“对象”拦截器喵！
+                # 如果 LLM 真的返回了这串 JS 风格的错误文本，灵灵会拦截它喵
+                if response_text == "[object Object]":
+                    logger.error(
+                        "[主动消息] 喵呜！LLM 返回了意料之外的 '[object Object]' 字符串喵！"
+                    )
+                    logger.warning(
+                        "[主动消息] 这通常是因为上下文或 Prompt 中包含了无法解析的对象喵。已拦截本次发送喵。"
+                    )
+                    await self._schedule_next_chat_and_save(session_id)
+                    return
+
                 logger.info(f"[主动消息] LLM 已生成文本喵: '{response_text}'。")
 
                 # 在发送消息前检查状态一致性
