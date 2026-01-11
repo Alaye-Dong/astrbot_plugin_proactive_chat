@@ -17,7 +17,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/AstrBot-v4.10.2%20Compatible-brightgreen.svg" alt="Compatible with AstrBot v4.10.2">
-  <img src="https://img.shields.io/badge/Release-v1.1.2-brightgreen.svg" alt="Release">
+  <img src="https://img.shields.io/github/v/release/DBJD-CR/astrbot_plugin_proactive_chat?label=Release&color=brightgreen" alt="Latest Release">
   <img src="https://img.shields.io/badge/QQ_Group-1033089808-12B7F3.svg" alt="QQ Group">
 </p>
 
@@ -127,13 +127,13 @@
 > [!TIP]
 > Relevant development data of this project (continuously updated):
 >
-> Development duration: accumulated 34 days (main plugin part)
+> Development duration: accumulated 37 days (main plugin part)
 >
-> Cumulative man-hours: about 206 hours (main plugin part)
+> Cumulative man-hours: about 215 hours (main plugin part)
 >
 > Creating this repository: accumulated 3 days, about 22 hours
 >
-> Large models used: Gemini-2.5-Pro, Kimi For Coding, Gemini-3.0 Pro (With RooCode in VSCode)
+> Large models used: Gemini-2.5-Pro, Kimi For Coding, Gemini-3.0 Flash/Pro (With RooCode in VSCode)
 >
 > Large models used for testing conversations: DeepSeek-V3.2-Exp, DeepSeek-V3.2
 >
@@ -143,7 +143,7 @@
 >
 > Temperature: 0 or 0.6
 >
-> Tokens Used: 407,196,733
+> Tokens Used: 422,324,753
 
 ## 🌟 Features
 
@@ -492,6 +492,24 @@ The plugin adopts a hybrid architecture of **Event-Driven + Dual-Mode Scheduling
 > 2. There is currently no running proactive message task.
 > 3. Session configuration is enabled and valid.
 > 4. After receiving any message, the automatic trigger will be cancelled (this is normal behavior).
+
+**Q: Error message ApiNotAvailable?**
+
+> **A**: Currently, all known information indicates that `ApiNotAvailable` is not a bug in the plugin itself, but a connection anomaly between the underlying OneBot adapter and the physical robot (NapCat/Lagrange, etc.).
+> Common causes include: the robot is offline but the platform did not detect it, the heartbeat interval is too long and cut off by the router/firewall, there are zombie/unconnected platform configuration items in the background, or even the browser's power-saving mode affecting the WebSocket page (there are cases with Edge, but it's not the only reason).
+>
+> This problem behaves differently under different AstrBot versions, deployment methods (Windows/Docker), and network environments, and cannot be stably reproduced. It is normal for some users to return to normal after rolling back versions, while others will recur, indicating that environmental factors dominate.
+> Recommendations for investigation:
+>
+> 1. OneBot client logs, check for frequent Close/Reconnect or offline prompts.
+> 2. All platform configuration items, ensure there are no redundant or unconnected "ghost platforms".
+> 3. Heartbeat settings, recommended to shorten (e.g., 30 seconds) to keep the connection active.
+> 4. Network environment, investigate whether there are settings such as firewalls, NAT, router power saving that affect long connections.
+> 5. If using a browser to manage WebSocket, try turning off power-saving mode or switching browsers.
+> 6. Restart services like AstrBot and NapCat. If your Bot is deployed on a server, restart the server if necessary.
+>
+> Capturing detailed OneBot client logs when the error occurs, or testing across different network environments/devices/browsers, may help further locate the issue.
+> This problem is essentially "unstable connection between the physical robot and the platform". Polling and fault tolerance have been implemented at the code level, and the rest can only be checked by environment investigation.
 
 ### ⏰ Time and Trigger Related Issues
 
