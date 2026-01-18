@@ -29,7 +29,12 @@
                         "description": "⏱️ 自动触发等待时间 (分钟)",
                         "type": "int",
                         "default": 5,
-                        "hint": "插件启动后，如果私聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                        "hint": "插件启动后，如果私聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建",
+                        "slider": {
+                            "min": 1,
+                            "max": 120,
+                            "step": 1
+                        }
                     }
                 }
             },
@@ -47,13 +52,23 @@
                         "description": "最小触发间隔 (分钟)",
                         "type": "int",
                         "default": 30,
-                        "hint": "主动消息的最小时间间隔，防止过于频繁地打扰用户"
+                        "hint": "主动消息的最小时间间隔，防止过于频繁地打扰用户",
+                        "slider": {
+                            "min": 1,
+                            "max": 1440,
+                            "step": 1
+                        }
                     },
                     "max_interval_minutes": {
                         "description": "最大触发间隔 (分钟)",
                         "type": "int",
                         "default": 900,
-                        "hint": "主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                        "hint": "主动消息的最大时间间隔，确保Bot不会太久不主动说话",
+                        "slider": {
+                            "min": 1,
+                            "max": 2880,
+                            "step": 1
+                        }
                     },
                     "quiet_hours": {
                         "description": "免打扰时段 (24小时制)",
@@ -65,7 +80,12 @@
                         "description": "最大未回复次数上限",
                         "type": "int",
                         "default": 4,
-                        "hint": "当Bot连续发送N次主动消息用户都未回复后，将暂停主动消息，直到用户下次回复。填0则不限制"
+                        "hint": "当Bot连续发送N次主动消息用户都未回复后，将暂停主动消息，直到用户下次回复。填0则不限制",
+                        "slider": {
+                            "min": 0,
+                            "max": 20,
+                            "step": 1
+                        }
                     }
                 }
             },
@@ -101,14 +121,25 @@
                         "description": "📏 不分段字数阈值",
                         "type": "int",
                         "default": 150,
-                        "hint": "如果回复内容字数超过此值，则不进行分段"
+                        "hint": "如果回复内容字数超过此值，则不进行分段",
+                        "slider": {
+                            "min": 0,
+                            "max": 1000,
+                            "step": 1
+                        }
                     },
                     "split_mode": {
                         "description": "Ⓜ️ 分段模式",
                         "type": "string",
-                        "options": ["regex", "words"],
+                        "options": [
+                            "regex",
+                            "words"
+                        ],
                         "default": "regex",
-                        "labels": ["正则表达式", "分段词列表"]
+                        "labels": [
+                            "正则表达式",
+                            "分段词列表"
+                        ]
                     },
                     "regex": {
                         "description": "🧩 分段正则表达式",
@@ -121,7 +152,13 @@
                     "split_words": {
                         "description": "📝 分段词列表",
                         "type": "list",
-                        "default": ["。", "？", "！", "~", "…"],
+                        "default": [
+                            "。",
+                            "？",
+                            "！",
+                            "~",
+                            "…"
+                        ],
                         "condition": {
                             "split_mode": "words"
                         },
@@ -130,9 +167,15 @@
                     "interval_method": {
                         "description": "⏱️ 间隔计算方法",
                         "type": "string",
-                        "options": ["random", "log"],
+                        "options": [
+                            "random",
+                            "log"
+                        ],
                         "default": "random",
-                        "labels": ["随机", "对数计算"],
+                        "labels": [
+                            "随机",
+                            "对数计算"
+                        ],
                         "hint": "random: 在区间内随机; log: 根据字数计算 y=log_base(x)"
                     },
                     "interval": {
@@ -186,7 +229,12 @@
                         "description": "⏱️ 自动触发等待时间 (分钟)",
                         "type": "int",
                         "default": 5,
-                        "hint": "插件启动后，如果群聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                        "hint": "插件启动后，如果群聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建",
+                        "slider": {
+                            "min": 1,
+                            "max": 120,
+                            "step": 1
+                        }
                     }
                 }
             },
@@ -194,7 +242,12 @@
                 "description": "⏳ 群聊沉默触发时间 (分钟)",
                 "type": "int",
                 "default": 30,
-                "hint": "当群聊中连续 X 分钟没有任何新消息时，才会开始计划一次主动消息"
+                "hint": "当群聊中连续 X 分钟没有任何新消息时，才会开始计划一次主动消息",
+                "slider": {
+                    "min": 1,
+                    "max": 1440,
+                    "step": 1
+                }
             },
             "proactive_prompt": {
                 "description": "🧠 群聊全局动机 Prompt",
@@ -210,13 +263,23 @@
                         "description": "最小触发间隔 (分钟)",
                         "type": "int",
                         "default": 90,
-                        "hint": "群聊主动消息的最小时间间隔，防止过于频繁地打扰群成员"
+                        "hint": "群聊主动消息的最小时间间隔，防止过于频繁地打扰群成员",
+                        "slider": {
+                            "min": 1,
+                            "max": 1440,
+                            "step": 1
+                        }
                     },
                     "max_interval_minutes": {
                         "description": "最大触发间隔 (分钟)",
                         "type": "int",
                         "default": 360,
-                        "hint": "群聊主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                        "hint": "群聊主动消息的最大时间间隔，确保Bot不会太久不主动说话",
+                        "slider": {
+                            "min": 1,
+                            "max": 2880,
+                            "step": 1
+                        }
                     },
                     "quiet_hours": {
                         "description": "免打扰时段 (24小时制)",
@@ -228,7 +291,12 @@
                         "description": "最大未回复次数上限",
                         "type": "int",
                         "default": 2,
-                        "hint": "当Bot连续发送N次主动消息群成员都未回复后，将暂停主动消息。填0则不限制"
+                        "hint": "当Bot连续发送N次主动消息群成员都未回复后，将暂停主动消息。填0则不限制",
+                        "slider": {
+                            "min": 0,
+                            "max": 20,
+                            "step": 1
+                        }
                     }
                 }
             },
@@ -264,14 +332,25 @@
                         "description": "📏 不分段字数阈值",
                         "type": "int",
                         "default": 150,
-                        "hint": "如果回复内容字数超过此值，则不进行分段"
+                        "hint": "如果回复内容字数超过此值，则不进行分段",
+                        "slider": {
+                            "min": 0,
+                            "max": 1000,
+                            "step": 1
+                        }
                     },
                     "split_mode": {
                         "description": "Ⓜ️ 分段模式",
                         "type": "string",
-                        "options": ["regex", "words"],
+                        "options": [
+                            "regex",
+                            "words"
+                        ],
                         "default": "regex",
-                        "labels": ["正则表达式", "分段词列表"]
+                        "labels": [
+                            "正则表达式",
+                            "分段词列表"
+                        ]
                     },
                     "regex": {
                         "description": "🧩 分段正则表达式",
@@ -284,7 +363,13 @@
                     "split_words": {
                         "description": "📝 分段词列表",
                         "type": "list",
-                        "default": ["。", "？", "！", "~", "…"],
+                        "default": [
+                            "。",
+                            "？",
+                            "！",
+                            "~",
+                            "…"
+                        ],
                         "condition": {
                             "split_mode": "words"
                         },
@@ -293,9 +378,15 @@
                     "interval_method": {
                         "description": "⏱️ 间隔计算方法",
                         "type": "string",
-                        "options": ["random", "log"],
+                        "options": [
+                            "random",
+                            "log"
+                        ],
                         "default": "random",
-                        "labels": ["随机", "对数计算"],
+                        "labels": [
+                            "随机",
+                            "对数计算"
+                        ],
                         "hint": "random: 在区间内随机; log: 根据字数计算 y=log_base(x)"
                     },
                     "interval": {
@@ -359,7 +450,12 @@
                                 "description": "⏱️ 自动触发等待时间 (分钟)",
                                 "type": "int",
                                 "default": 5,
-                                "hint": "插件启动后，如果私聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                                "hint": "插件启动后，如果私聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 120,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -377,13 +473,23 @@
                                 "description": "最小触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 30,
-                                "hint": "主动消息的最小时间间隔，防止过于频繁地打扰用户"
+                                "hint": "主动消息的最小时间间隔，防止过于频繁地打扰用户",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 1440,
+                                    "step": 1
+                                }
                             },
                             "max_interval_minutes": {
                                 "description": "最大触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 900,
-                                "hint": "主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                                "hint": "主动消息的最大时间间隔，确保Bot不会太久不主动说话",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 2880,
+                                    "step": 1
+                                }
                             },
                             "quiet_hours": {
                                 "description": "免打扰时段 (24小时制)",
@@ -395,7 +501,12 @@
                                 "description": "最大未回复次数上限",
                                 "type": "int",
                                 "default": 4,
-                                "hint": "当Bot连续发送N次主动消息用户都未回复后，将暂停主动消息，直到用户下次回复。填0则不限制"
+                                "hint": "当Bot连续发送N次主动消息用户都未回复后，将暂停主动消息，直到用户下次回复。填0则不限制",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 20,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -431,14 +542,25 @@
                                 "description": "📏 不分段字数阈值",
                                 "type": "int",
                                 "default": 150,
-                                "hint": "如果回复内容字数超过此值，则不进行分段"
+                                "hint": "如果回复内容字数超过此值，则不进行分段",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 1000,
+                                    "step": 1
+                                }
                             },
                             "split_mode": {
                                 "description": "Ⓜ️ 分段模式",
                                 "type": "string",
-                                "options": ["regex", "words"],
+                                "options": [
+                                    "regex",
+                                    "words"
+                                ],
                                 "default": "regex",
-                                "labels": ["正则表达式", "分段词列表"]
+                                "labels": [
+                                    "正则表达式",
+                                    "分段词列表"
+                                ]
                             },
                             "regex": {
                                 "description": "🧩 分段正则表达式",
@@ -451,7 +573,13 @@
                             "split_words": {
                                 "description": "📝 分段词列表",
                                 "type": "list",
-                                "default": ["。", "？", "！", "~", "…"],
+                                "default": [
+                                    "。",
+                                    "？",
+                                    "！",
+                                    "~",
+                                    "…"
+                                ],
                                 "condition": {
                                     "split_mode": "words"
                                 },
@@ -460,9 +588,15 @@
                             "interval_method": {
                                 "description": "⏱️ 间隔计算方法",
                                 "type": "string",
-                                "options": ["random", "log"],
+                                "options": [
+                                    "random",
+                                    "log"
+                                ],
                                 "default": "random",
-                                "labels": ["随机", "对数计算"],
+                                "labels": [
+                                    "随机",
+                                    "对数计算"
+                                ],
                                 "hint": "random: 在区间内随机; log: 根据字数计算 y=log_base(x)"
                             },
                             "interval": {
@@ -522,7 +656,12 @@
                                 "description": "⏱️ 自动触发等待时间 (分钟)",
                                 "type": "int",
                                 "default": 5,
-                                "hint": "插件启动后，如果私聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                                "hint": "插件启动后，如果私聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 120,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -540,13 +679,23 @@
                                 "description": "最小触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 30,
-                                "hint": "主动消息的最小时间间隔，防止过于频繁地打扰用户"
+                                "hint": "主动消息的最小时间间隔，防止过于频繁地打扰用户",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 1440,
+                                    "step": 1
+                                }
                             },
                             "max_interval_minutes": {
                                 "description": "最大触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 900,
-                                "hint": "主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                                "hint": "主动消息的最大时间间隔，确保Bot不会太久不主动说话",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 2880,
+                                    "step": 1
+                                }
                             },
                             "quiet_hours": {
                                 "description": "免打扰时段 (24小时制)",
@@ -558,7 +707,12 @@
                                 "description": "最大未回复次数上限",
                                 "type": "int",
                                 "default": 4,
-                                "hint": "当Bot连续发送N次主动消息用户都未回复后，将暂停主动消息，直到用户下次回复。填0则不限制"
+                                "hint": "当Bot连续发送N次主动消息用户都未回复后，将暂停主动消息，直到用户下次回复。填0则不限制",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 20,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -594,14 +748,25 @@
                                 "description": "📏 不分段字数阈值",
                                 "type": "int",
                                 "default": 150,
-                                "hint": "如果回复内容字数超过此值，则不进行分段"
+                                "hint": "如果回复内容字数超过此值，则不进行分段",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 1000,
+                                    "step": 1
+                                }
                             },
                             "split_mode": {
                                 "description": "Ⓜ️ 分段模式",
                                 "type": "string",
-                                "options": ["regex", "words"],
+                                "options": [
+                                    "regex",
+                                    "words"
+                                ],
                                 "default": "regex",
-                                "labels": ["正则表达式", "分段词列表"]
+                                "labels": [
+                                    "正则表达式",
+                                    "分段词列表"
+                                ]
                             },
                             "regex": {
                                 "description": "🧩 分段正则表达式",
@@ -614,7 +779,13 @@
                             "split_words": {
                                 "description": "📝 分段词列表",
                                 "type": "list",
-                                "default": ["。", "？", "！", "~", "…"],
+                                "default": [
+                                    "。",
+                                    "？",
+                                    "！",
+                                    "~",
+                                    "…"
+                                ],
                                 "condition": {
                                     "split_mode": "words"
                                 },
@@ -623,9 +794,15 @@
                             "interval_method": {
                                 "description": "⏱️ 间隔计算方法",
                                 "type": "string",
-                                "options": ["random", "log"],
+                                "options": [
+                                    "random",
+                                    "log"
+                                ],
                                 "default": "random",
-                                "labels": ["随机", "对数计算"],
+                                "labels": [
+                                    "随机",
+                                    "对数计算"
+                                ],
                                 "hint": "random: 在区间内随机; log: 根据字数计算 y=log_base(x)"
                             },
                             "interval": {
@@ -685,7 +862,12 @@
                                 "description": "⏱️ 自动触发等待时间 (分钟)",
                                 "type": "int",
                                 "default": 5,
-                                "hint": "插件启动后，如果私聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                                "hint": "插件启动后，如果私聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 120,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -703,13 +885,23 @@
                                 "description": "最小触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 30,
-                                "hint": "主动消息的最小时间间隔，防止过于频繁地打扰用户"
+                                "hint": "主动消息的最小时间间隔，防止过于频繁地打扰用户",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 1440,
+                                    "step": 1
+                                }
                             },
                             "max_interval_minutes": {
                                 "description": "最大触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 900,
-                                "hint": "主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                                "hint": "主动消息的最大时间间隔，确保Bot不会太久不主动说话",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 2880,
+                                    "step": 1
+                                }
                             },
                             "quiet_hours": {
                                 "description": "免打扰时段 (24小时制)",
@@ -721,7 +913,12 @@
                                 "description": "最大未回复次数上限",
                                 "type": "int",
                                 "default": 4,
-                                "hint": "当Bot连续发送N次主动消息用户都未回复后，将暂停主动消息，直到用户下次回复。填0则不限制"
+                                "hint": "当Bot连续发送N次主动消息用户都未回复后，将暂停主动消息，直到用户下次回复。填0则不限制",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 20,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -757,14 +954,25 @@
                                 "description": "📏 不分段字数阈值",
                                 "type": "int",
                                 "default": 150,
-                                "hint": "如果回复内容字数超过此值，则不进行分段"
+                                "hint": "如果回复内容字数超过此值，则不进行分段",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 1000,
+                                    "step": 1
+                                }
                             },
                             "split_mode": {
                                 "description": "Ⓜ️ 分段模式",
                                 "type": "string",
-                                "options": ["regex", "words"],
+                                "options": [
+                                    "regex",
+                                    "words"
+                                ],
                                 "default": "regex",
-                                "labels": ["正则表达式", "分段词列表"]
+                                "labels": [
+                                    "正则表达式",
+                                    "分段词列表"
+                                ]
                             },
                             "regex": {
                                 "description": "🧩 分段正则表达式",
@@ -777,7 +985,13 @@
                             "split_words": {
                                 "description": "📝 分段词列表",
                                 "type": "list",
-                                "default": ["。", "？", "！", "~", "…"],
+                                "default": [
+                                    "。",
+                                    "？",
+                                    "！",
+                                    "~",
+                                    "…"
+                                ],
                                 "condition": {
                                     "split_mode": "words"
                                 },
@@ -786,9 +1000,15 @@
                             "interval_method": {
                                 "description": "⏱️ 间隔计算方法",
                                 "type": "string",
-                                "options": ["random", "log"],
+                                "options": [
+                                    "random",
+                                    "log"
+                                ],
                                 "default": "random",
-                                "labels": ["随机", "对数计算"],
+                                "labels": [
+                                    "随机",
+                                    "对数计算"
+                                ],
                                 "hint": "random: 在区间内随机; log: 根据字数计算 y=log_base(x)"
                             },
                             "interval": {
@@ -848,7 +1068,12 @@
                                 "description": "⏱️ 自动触发等待时间 (分钟)",
                                 "type": "int",
                                 "default": 5,
-                                "hint": "插件启动后，如果私聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                                "hint": "插件启动后，如果私聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 120,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -866,13 +1091,23 @@
                                 "description": "最小触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 30,
-                                "hint": "主动消息的最小时间间隔，防止过于频繁地打扰用户"
+                                "hint": "主动消息的最小时间间隔，防止过于频繁地打扰用户",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 1440,
+                                    "step": 1
+                                }
                             },
                             "max_interval_minutes": {
                                 "description": "最大触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 900,
-                                "hint": "主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                                "hint": "主动消息的最大时间间隔，确保Bot不会太久不主动说话",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 2880,
+                                    "step": 1
+                                }
                             },
                             "quiet_hours": {
                                 "description": "免打扰时段 (24小时制)",
@@ -884,7 +1119,12 @@
                                 "description": "最大未回复次数上限",
                                 "type": "int",
                                 "default": 4,
-                                "hint": "当Bot连续发送N次主动消息用户都未回复后，将暂停主动消息，直到用户下次回复。填0则不限制"
+                                "hint": "当Bot连续发送N次主动消息用户都未回复后，将暂停主动消息，直到用户下次回复。填0则不限制",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 20,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -920,14 +1160,25 @@
                                 "description": "📏 不分段字数阈值",
                                 "type": "int",
                                 "default": 150,
-                                "hint": "如果回复内容字数超过此值，则不进行分段"
+                                "hint": "如果回复内容字数超过此值，则不进行分段",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 1000,
+                                    "step": 1
+                                }
                             },
                             "split_mode": {
                                 "description": "Ⓜ️ 分段模式",
                                 "type": "string",
-                                "options": ["regex", "words"],
+                                "options": [
+                                    "regex",
+                                    "words"
+                                ],
                                 "default": "regex",
-                                "labels": ["正则表达式", "分段词列表"]
+                                "labels": [
+                                    "正则表达式",
+                                    "分段词列表"
+                                ]
                             },
                             "regex": {
                                 "description": "🧩 分段正则表达式",
@@ -940,7 +1191,13 @@
                             "split_words": {
                                 "description": "📝 分段词列表",
                                 "type": "list",
-                                "default": ["。", "？", "！", "~", "…"],
+                                "default": [
+                                    "。",
+                                    "？",
+                                    "！",
+                                    "~",
+                                    "…"
+                                ],
                                 "condition": {
                                     "split_mode": "words"
                                 },
@@ -949,9 +1206,15 @@
                             "interval_method": {
                                 "description": "⏱️ 间隔计算方法",
                                 "type": "string",
-                                "options": ["random", "log"],
+                                "options": [
+                                    "random",
+                                    "log"
+                                ],
                                 "default": "random",
-                                "labels": ["随机", "对数计算"],
+                                "labels": [
+                                    "随机",
+                                    "对数计算"
+                                ],
                                 "hint": "random: 在区间内随机; log: 根据字数计算 y=log_base(x)"
                             },
                             "interval": {
@@ -1011,7 +1274,12 @@
                                 "description": "⏱️ 自动触发等待时间 (分钟)",
                                 "type": "int",
                                 "default": 5,
-                                "hint": "插件启动后，如果私聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                                "hint": "插件启动后，如果私聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 120,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -1029,13 +1297,23 @@
                                 "description": "最小触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 30,
-                                "hint": "主动消息的最小时间间隔，防止过于频繁地打扰用户"
+                                "hint": "主动消息的最小时间间隔，防止过于频繁地打扰用户",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 1440,
+                                    "step": 1
+                                }
                             },
                             "max_interval_minutes": {
                                 "description": "最大触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 900,
-                                "hint": "主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                                "hint": "主动消息的最大时间间隔，确保Bot不会太久不主动说话",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 2880,
+                                    "step": 1
+                                }
                             },
                             "quiet_hours": {
                                 "description": "免打扰时段 (24小时制)",
@@ -1047,7 +1325,12 @@
                                 "description": "最大未回复次数上限",
                                 "type": "int",
                                 "default": 4,
-                                "hint": "当Bot连续发送N次主动消息用户都未回复后，将暂停主动消息，直到用户下次回复。填0则不限制"
+                                "hint": "当Bot连续发送N次主动消息用户都未回复后，将暂停主动消息，直到用户下次回复。填0则不限制",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 20,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -1083,14 +1366,25 @@
                                 "description": "📏 不分段字数阈值",
                                 "type": "int",
                                 "default": 150,
-                                "hint": "如果回复内容字数超过此值，则不进行分段"
+                                "hint": "如果回复内容字数超过此值，则不进行分段",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 1000,
+                                    "step": 1
+                                }
                             },
                             "split_mode": {
                                 "description": "Ⓜ️ 分段模式",
                                 "type": "string",
-                                "options": ["regex", "words"],
+                                "options": [
+                                    "regex",
+                                    "words"
+                                ],
                                 "default": "regex",
-                                "labels": ["正则表达式", "分段词列表"]
+                                "labels": [
+                                    "正则表达式",
+                                    "分段词列表"
+                                ]
                             },
                             "regex": {
                                 "description": "🧩 分段正则表达式",
@@ -1103,7 +1397,13 @@
                             "split_words": {
                                 "description": "📝 分段词列表",
                                 "type": "list",
-                                "default": ["。", "？", "！", "~", "…"],
+                                "default": [
+                                    "。",
+                                    "？",
+                                    "！",
+                                    "~",
+                                    "…"
+                                ],
                                 "condition": {
                                     "split_mode": "words"
                                 },
@@ -1112,9 +1412,15 @@
                             "interval_method": {
                                 "description": "⏱️ 间隔计算方法",
                                 "type": "string",
-                                "options": ["random", "log"],
+                                "options": [
+                                    "random",
+                                    "log"
+                                ],
                                 "default": "random",
-                                "labels": ["随机", "对数计算"],
+                                "labels": [
+                                    "随机",
+                                    "对数计算"
+                                ],
                                 "hint": "random: 在区间内随机; log: 根据字数计算 y=log_base(x)"
                             },
                             "interval": {
@@ -1180,7 +1486,12 @@
                                 "description": "⏱️ 自动触发等待时间 (分钟)",
                                 "type": "int",
                                 "default": 5,
-                                "hint": "插件启动后，如果群聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                                "hint": "插件启动后，如果群聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 120,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -1188,7 +1499,12 @@
                         "description": "⏳ 群聊沉默触发时间 (分钟)",
                         "type": "int",
                         "default": 30,
-                        "hint": "当群聊中连续 X 分钟没有任何新消息时，才会开始计划一次主动消息"
+                        "hint": "当群聊中连续 X 分钟没有任何新消息时，才会开始计划一次主动消息",
+                        "slider": {
+                            "min": 1,
+                            "max": 1440,
+                            "step": 1
+                        }
                     },
                     "proactive_prompt": {
                         "description": "🧠 群聊动机 Prompt",
@@ -1204,13 +1520,23 @@
                                 "description": "最小触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 90,
-                                "hint": "群聊主动消息的最小时间间隔，防止过于频繁地打扰群成员"
+                                "hint": "群聊主动消息的最小时间间隔，防止过于频繁地打扰群成员",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 1440,
+                                    "step": 1
+                                }
                             },
                             "max_interval_minutes": {
                                 "description": "最大触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 360,
-                                "hint": "群聊主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                                "hint": "群聊主动消息的最大时间间隔，确保Bot不会太久不主动说话",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 2880,
+                                    "step": 1
+                                }
                             },
                             "quiet_hours": {
                                 "description": "免打扰时段 (24小时制)",
@@ -1222,7 +1548,12 @@
                                 "description": "最大未回复次数上限",
                                 "type": "int",
                                 "default": 2,
-                                "hint": "当Bot连续发送N次主动消息群成员都未回复后，将暂停主动消息。填0则不限制"
+                                "hint": "当Bot连续发送N次主动消息群成员都未回复后，将暂停主动消息。填0则不限制",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 20,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -1258,14 +1589,25 @@
                                 "description": "📏 不分段字数阈值",
                                 "type": "int",
                                 "default": 150,
-                                "hint": "如果回复内容字数超过此值，则不进行分段"
+                                "hint": "如果回复内容字数超过此值，则不进行分段",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 1000,
+                                    "step": 1
+                                }
                             },
                             "split_mode": {
                                 "description": "Ⓜ️ 分段模式",
                                 "type": "string",
-                                "options": ["regex", "words"],
+                                "options": [
+                                    "regex",
+                                    "words"
+                                ],
                                 "default": "regex",
-                                "labels": ["正则表达式", "分段词列表"]
+                                "labels": [
+                                    "正则表达式",
+                                    "分段词列表"
+                                ]
                             },
                             "regex": {
                                 "description": "🧩 分段正则表达式",
@@ -1278,7 +1620,13 @@
                             "split_words": {
                                 "description": "📝 分段词列表",
                                 "type": "list",
-                                "default": ["。", "？", "！", "~", "…"],
+                                "default": [
+                                    "。",
+                                    "？",
+                                    "！",
+                                    "~",
+                                    "…"
+                                ],
                                 "condition": {
                                     "split_mode": "words"
                                 },
@@ -1287,9 +1635,15 @@
                             "interval_method": {
                                 "description": "⏱️ 间隔计算方法",
                                 "type": "string",
-                                "options": ["random", "log"],
+                                "options": [
+                                    "random",
+                                    "log"
+                                ],
                                 "default": "random",
-                                "labels": ["随机", "对数计算"],
+                                "labels": [
+                                    "随机",
+                                    "对数计算"
+                                ],
                                 "hint": "random: 在区间内随机; log: 根据字数计算 y=log_base(x)"
                             },
                             "interval": {
@@ -1349,7 +1703,12 @@
                                 "description": "⏱️ 自动触发等待时间 (分钟)",
                                 "type": "int",
                                 "default": 5,
-                                "hint": "插件启动后，如果群聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                                "hint": "插件启动后，如果群聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 120,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -1357,7 +1716,12 @@
                         "description": "⏳ 群聊沉默触发时间 (分钟)",
                         "type": "int",
                         "default": 30,
-                        "hint": "当群聊中连续 X 分钟没有任何新消息时，才会开始计划一次主动消息"
+                        "hint": "当群聊中连续 X 分钟没有任何新消息时，才会开始计划一次主动消息",
+                        "slider": {
+                            "min": 1,
+                            "max": 1440,
+                            "step": 1
+                        }
                     },
                     "proactive_prompt": {
                         "description": "🧠 群聊动机 Prompt",
@@ -1373,13 +1737,23 @@
                                 "description": "最小触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 90,
-                                "hint": "群聊主动消息的最小时间间隔，防止过于频繁地打扰群成员"
+                                "hint": "群聊主动消息的最小时间间隔，防止过于频繁地打扰群成员",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 1440,
+                                    "step": 1
+                                }
                             },
                             "max_interval_minutes": {
                                 "description": "最大触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 360,
-                                "hint": "群聊主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                                "hint": "群聊主动消息的最大时间间隔，确保Bot不会太久不主动说话",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 2880,
+                                    "step": 1
+                                }
                             },
                             "quiet_hours": {
                                 "description": "免打扰时段 (24小时制)",
@@ -1391,7 +1765,12 @@
                                 "description": "最大未回复次数上限",
                                 "type": "int",
                                 "default": 2,
-                                "hint": "当Bot连续发送N次主动消息群成员都未回复后，将暂停主动消息。填0则不限制"
+                                "hint": "当Bot连续发送N次主动消息群成员都未回复后，将暂停主动消息。填0则不限制",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 20,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -1427,14 +1806,25 @@
                                 "description": "📏 不分段字数阈值",
                                 "type": "int",
                                 "default": 150,
-                                "hint": "如果回复内容字数超过此值，则不进行分段"
+                                "hint": "如果回复内容字数超过此值，则不进行分段",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 1000,
+                                    "step": 1
+                                }
                             },
                             "split_mode": {
                                 "description": "Ⓜ️ 分段模式",
                                 "type": "string",
-                                "options": ["regex", "words"],
+                                "options": [
+                                    "regex",
+                                    "words"
+                                ],
                                 "default": "regex",
-                                "labels": ["正则表达式", "分段词列表"]
+                                "labels": [
+                                    "正则表达式",
+                                    "分段词列表"
+                                ]
                             },
                             "regex": {
                                 "description": "🧩 分段正则表达式",
@@ -1447,7 +1837,13 @@
                             "split_words": {
                                 "description": "📝 分段词列表",
                                 "type": "list",
-                                "default": ["。", "？", "！", "~", "…"],
+                                "default": [
+                                    "。",
+                                    "？",
+                                    "！",
+                                    "~",
+                                    "…"
+                                ],
                                 "condition": {
                                     "split_mode": "words"
                                 },
@@ -1456,9 +1852,15 @@
                             "interval_method": {
                                 "description": "⏱️ 间隔计算方法",
                                 "type": "string",
-                                "options": ["random", "log"],
+                                "options": [
+                                    "random",
+                                    "log"
+                                ],
                                 "default": "random",
-                                "labels": ["随机", "对数计算"],
+                                "labels": [
+                                    "随机",
+                                    "对数计算"
+                                ],
                                 "hint": "random: 在区间内随机; log: 根据字数计算 y=log_base(x)"
                             },
                             "interval": {
@@ -1518,7 +1920,12 @@
                                 "description": "⏱️ 自动触发等待时间 (分钟)",
                                 "type": "int",
                                 "default": 5,
-                                "hint": "插件启动后，如果群聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                                "hint": "插件启动后，如果群聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 120,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -1526,7 +1933,12 @@
                         "description": "⏳ 群聊沉默触发时间 (分钟)",
                         "type": "int",
                         "default": 30,
-                        "hint": "当群聊中连续 X 分钟没有任何新消息时，才会开始计划一次主动消息"
+                        "hint": "当群聊中连续 X 分钟没有任何新消息时，才会开始计划一次主动消息",
+                        "slider": {
+                            "min": 1,
+                            "max": 1440,
+                            "step": 1
+                        }
                     },
                     "proactive_prompt": {
                         "description": "🧠 群聊动机 Prompt",
@@ -1542,13 +1954,23 @@
                                 "description": "最小触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 90,
-                                "hint": "群聊主动消息的最小时间间隔，防止过于频繁地打扰群成员"
+                                "hint": "群聊主动消息的最小时间间隔，防止过于频繁地打扰群成员",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 1440,
+                                    "step": 1
+                                }
                             },
                             "max_interval_minutes": {
                                 "description": "最大触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 360,
-                                "hint": "群聊主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                                "hint": "群聊主动消息的最大时间间隔，确保Bot不会太久不主动说话",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 2880,
+                                    "step": 1
+                                }
                             },
                             "quiet_hours": {
                                 "description": "免打扰时段 (24小时制)",
@@ -1560,7 +1982,12 @@
                                 "description": "最大未回复次数上限",
                                 "type": "int",
                                 "default": 2,
-                                "hint": "当Bot连续发送N次主动消息群成员都未回复后，将暂停主动消息。填0则不限制"
+                                "hint": "当Bot连续发送N次主动消息群成员都未回复后，将暂停主动消息。填0则不限制",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 20,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -1596,14 +2023,25 @@
                                 "description": "📏 不分段字数阈值",
                                 "type": "int",
                                 "default": 150,
-                                "hint": "如果回复内容字数超过此值，则不进行分段"
+                                "hint": "如果回复内容字数超过此值，则不进行分段",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 1000,
+                                    "step": 1
+                                }
                             },
                             "split_mode": {
                                 "description": "Ⓜ️ 分段模式",
                                 "type": "string",
-                                "options": ["regex", "words"],
+                                "options": [
+                                    "regex",
+                                    "words"
+                                ],
                                 "default": "regex",
-                                "labels": ["正则表达式", "分段词列表"]
+                                "labels": [
+                                    "正则表达式",
+                                    "分段词列表"
+                                ]
                             },
                             "regex": {
                                 "description": "🧩 分段正则表达式",
@@ -1616,7 +2054,13 @@
                             "split_words": {
                                 "description": "📝 分段词列表",
                                 "type": "list",
-                                "default": ["。", "？", "！", "~", "…"],
+                                "default": [
+                                    "。",
+                                    "？",
+                                    "！",
+                                    "~",
+                                    "…"
+                                ],
                                 "condition": {
                                     "split_mode": "words"
                                 },
@@ -1625,9 +2069,15 @@
                             "interval_method": {
                                 "description": "⏱️ 间隔计算方法",
                                 "type": "string",
-                                "options": ["random", "log"],
+                                "options": [
+                                    "random",
+                                    "log"
+                                ],
                                 "default": "random",
-                                "labels": ["随机", "对数计算"],
+                                "labels": [
+                                    "随机",
+                                    "对数计算"
+                                ],
                                 "hint": "random: 在区间内随机; log: 根据字数计算 y=log_base(x)"
                             },
                             "interval": {
@@ -1687,7 +2137,12 @@
                                 "description": "⏱️ 自动触发等待时间 (分钟)",
                                 "type": "int",
                                 "default": 5,
-                                "hint": "插件启动后，如果群聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                                "hint": "插件启动后，如果群聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 120,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -1695,7 +2150,12 @@
                         "description": "⏳ 群聊沉默触发时间 (分钟)",
                         "type": "int",
                         "default": 30,
-                        "hint": "当群聊中连续 X 分钟没有任何新消息时，才会开始计划一次主动消息"
+                        "hint": "当群聊中连续 X 分钟没有任何新消息时，才会开始计划一次主动消息",
+                        "slider": {
+                            "min": 1,
+                            "max": 1440,
+                            "step": 1
+                        }
                     },
                     "proactive_prompt": {
                         "description": "🧠 群聊动机 Prompt",
@@ -1711,13 +2171,23 @@
                                 "description": "最小触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 90,
-                                "hint": "群聊主动消息的最小时间间隔，防止过于频繁地打扰群成员"
+                                "hint": "群聊主动消息的最小时间间隔，防止过于频繁地打扰群成员",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 1440,
+                                    "step": 1
+                                }
                             },
                             "max_interval_minutes": {
                                 "description": "最大触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 360,
-                                "hint": "群聊主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                                "hint": "群聊主动消息的最大时间间隔，确保Bot不会太久不主动说话",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 2880,
+                                    "step": 1
+                                }
                             },
                             "quiet_hours": {
                                 "description": "免打扰时段 (24小时制)",
@@ -1729,7 +2199,12 @@
                                 "description": "最大未回复次数上限",
                                 "type": "int",
                                 "default": 2,
-                                "hint": "当Bot连续发送N次主动消息群成员都未回复后，将暂停主动消息。填0则不限制"
+                                "hint": "当Bot连续发送N次主动消息群成员都未回复后，将暂停主动消息。填0则不限制",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 20,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -1765,14 +2240,25 @@
                                 "description": "📏 不分段字数阈值",
                                 "type": "int",
                                 "default": 150,
-                                "hint": "如果回复内容字数超过此值，则不进行分段"
+                                "hint": "如果回复内容字数超过此值，则不进行分段",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 1000,
+                                    "step": 1
+                                }
                             },
                             "split_mode": {
                                 "description": "Ⓜ️ 分段模式",
                                 "type": "string",
-                                "options": ["regex", "words"],
+                                "options": [
+                                    "regex",
+                                    "words"
+                                ],
                                 "default": "regex",
-                                "labels": ["正则表达式", "分段词列表"]
+                                "labels": [
+                                    "正则表达式",
+                                    "分段词列表"
+                                ]
                             },
                             "regex": {
                                 "description": "🧩 分段正则表达式",
@@ -1785,7 +2271,13 @@
                             "split_words": {
                                 "description": "📝 分段词列表",
                                 "type": "list",
-                                "default": ["。", "？", "！", "~", "…"],
+                                "default": [
+                                    "。",
+                                    "？",
+                                    "！",
+                                    "~",
+                                    "…"
+                                ],
                                 "condition": {
                                     "split_mode": "words"
                                 },
@@ -1794,9 +2286,15 @@
                             "interval_method": {
                                 "description": "⏱️ 间隔计算方法",
                                 "type": "string",
-                                "options": ["random", "log"],
+                                "options": [
+                                    "random",
+                                    "log"
+                                ],
                                 "default": "random",
-                                "labels": ["随机", "对数计算"],
+                                "labels": [
+                                    "随机",
+                                    "对数计算"
+                                ],
                                 "hint": "random: 在区间内随机; log: 根据字数计算 y=log_base(x)"
                             },
                             "interval": {
@@ -1856,7 +2354,12 @@
                                 "description": "⏱️ 自动触发等待时间 (分钟)",
                                 "type": "int",
                                 "default": 5,
-                                "hint": "插件启动后，如果群聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建"
+                                "hint": "插件启动后，如果群聊在X分钟内没有收到消息，且当前没有正在运行的主动消息任务，则自动触发一次主动消息任务创建",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 120,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -1864,7 +2367,12 @@
                         "description": "⏳ 群聊沉默触发时间 (分钟)",
                         "type": "int",
                         "default": 30,
-                        "hint": "当群聊中连续 X 分钟没有任何新消息时，才会开始计划一次主动消息"
+                        "hint": "当群聊中连续 X 分钟没有任何新消息时，才会开始计划一次主动消息",
+                        "slider": {
+                            "min": 1,
+                            "max": 1440,
+                            "step": 1
+                        }
                     },
                     "proactive_prompt": {
                         "description": "🧠 群聊动机 Prompt",
@@ -1880,13 +2388,23 @@
                                 "description": "最小触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 90,
-                                "hint": "群聊主动消息的最小时间间隔，防止过于频繁地打扰群成员"
+                                "hint": "群聊主动消息的最小时间间隔，防止过于频繁地打扰群成员",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 1440,
+                                    "step": 1
+                                }
                             },
                             "max_interval_minutes": {
                                 "description": "最大触发间隔 (分钟)",
                                 "type": "int",
                                 "default": 360,
-                                "hint": "群聊主动消息的最大时间间隔，确保Bot不会太久不主动说话"
+                                "hint": "群聊主动消息的最大时间间隔，确保Bot不会太久不主动说话",
+                                "slider": {
+                                    "min": 1,
+                                    "max": 2880,
+                                    "step": 1
+                                }
                             },
                             "quiet_hours": {
                                 "description": "免打扰时段 (24小时制)",
@@ -1898,7 +2416,12 @@
                                 "description": "最大未回复次数上限",
                                 "type": "int",
                                 "default": 2,
-                                "hint": "当Bot连续发送N次主动消息群成员都未回复后，将暂停主动消息。填0则不限制"
+                                "hint": "当Bot连续发送N次主动消息群成员都未回复后，将暂停主动消息。填0则不限制",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 20,
+                                    "step": 1
+                                }
                             }
                         }
                     },
@@ -1934,14 +2457,25 @@
                                 "description": "📏 不分段字数阈值",
                                 "type": "int",
                                 "default": 150,
-                                "hint": "如果回复内容字数超过此值，则不进行分段"
+                                "hint": "如果回复内容字数超过此值，则不进行分段",
+                                "slider": {
+                                    "min": 0,
+                                    "max": 1000,
+                                    "step": 1
+                                }
                             },
                             "split_mode": {
                                 "description": "Ⓜ️ 分段模式",
                                 "type": "string",
-                                "options": ["regex", "words"],
+                                "options": [
+                                    "regex",
+                                    "words"
+                                ],
                                 "default": "regex",
-                                "labels": ["正则表达式", "分段词列表"]
+                                "labels": [
+                                    "正则表达式",
+                                    "分段词列表"
+                                ]
                             },
                             "regex": {
                                 "description": "🧩 分段正则表达式",
@@ -1954,7 +2488,13 @@
                             "split_words": {
                                 "description": "📝 分段词列表",
                                 "type": "list",
-                                "default": ["。", "？", "！", "~", "…"],
+                                "default": [
+                                    "。",
+                                    "？",
+                                    "！",
+                                    "~",
+                                    "…"
+                                ],
                                 "condition": {
                                     "split_mode": "words"
                                 },
@@ -1963,9 +2503,15 @@
                             "interval_method": {
                                 "description": "⏱️ 间隔计算方法",
                                 "type": "string",
-                                "options": ["random", "log"],
+                                "options": [
+                                    "random",
+                                    "log"
+                                ],
                                 "default": "random",
-                                "labels": ["随机", "对数计算"],
+                                "labels": [
+                                    "随机",
+                                    "对数计算"
+                                ],
                                 "hint": "random: 在区间内随机; log: 根据字数计算 y=log_base(x)"
                             },
                             "interval": {
