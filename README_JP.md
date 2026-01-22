@@ -1,15 +1,18 @@
 <!-- markdownlint-disable MD033 -->
+<!-- markdownlint-disable MD041 -->
+
+![astrbot_plugin_proactive_chat](https://socialify.git.ci/DBJD-CR/astrbot_plugin_proactive_chat/image?custom_description=%F0%9F%92%96+%E8%AE%A9%E4%BD%A0%E7%9A%84+Bot+%E6%8B%A5%E6%9C%89%E4%B8%BB%E5%8A%A8%E5%85%B3%E6%80%80%E7%9A%84%E7%81%B5%E9%AD%82&description=1&font=Inter&forks=1&issues=1&language=1&name=1&owner=1&pattern=Formal+Invitation&pulls=1&stargazers=1&theme=Auto)
+
 <div align="center">
-
-# AstrBot向け能動的チャットプラグイン
-
-# Proactive Chat Plugin for AstrBot
-
-## あなたのBotに能動的な魂を
 
 [简体中文](README.md) | [English](README_EN.md) | 日本語
 
 </div>
+
+<p align="center">
+  <img src="assets/PluginRank.svg" alt="Plugin Rank">
+  <img src="assets/StarRank.svg" alt="Star Rank">
+</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-AGPL_3.0-blue.svg" alt="License: AGPL-3.0">
@@ -55,7 +58,7 @@
 - [📂 プラグインディレクトリと構造](#-プラグインディレクトリと構造)
 - [🏗️ コアアーキテクチャと開発者向け説明](#️-コアアーキテクチャと開発者向け説明)
 - [⚠️ バージョン履歴](#️-バージョン履歴)
-- [🚧 既知の制限](#-既知の制限)
+- [🚧 最新バージョンの既知の制限](#-最新バージョンの既知の制限)
 - [❓ よくある質問](#-よくある質問)
 - [🌐 プラットフォーム対応状況](#-プラットフォーム対応状況)
 - [📈 今後のロードマップ](#-今後のロードマップ)
@@ -467,6 +470,7 @@ graph TD
 
 ## 🚧 既知の制限
 
+- **マルチインスタンス非対応**: 現在は単一インスタンスのケースにのみ対応しています。複数のボットを使用している場合、追加のボットは能動的メッセージを正しく执行できず、プラグインが能動的メッセージを送信するボットインスタンスの選択に影響を与える可能性があります。予期しないボットから能動的メッセージが届き、プラグインが自律的に修正できない場合は、プラグインによって生成された永続データを削除し、能動的メッセージを送信したいボットと再度チャットしてみてください。
 - **設定の複雑さと制限**: 初回のマルチセッション設定は少し煩雑で、セッション数がプリセットスロットを超えると、一部のセッションでパーソナライズ設定ができず、取捨選択が必要になります。
 - **Prompt 依存**: 能動的メッセージの効果は、ユーザーがプロンプトで提供する創造性と誘導に大きく依存します。また、個人/グループチャットに十分に豊富なコンテキストがあるか、LLM 自体のモデル能力にも依存します。
 - **フレームワークの制限**: AstrBot 自体の制限により、一部のメッセージングプラットフォームでは本プラグインの機能が正常に使用できない場合があります。

@@ -1,15 +1,18 @@
 <!-- markdownlint-disable MD033 -->
+<!-- markdownlint-disable MD041 -->
+
+![astrbot_plugin_proactive_chat](https://socialify.git.ci/DBJD-CR/astrbot_plugin_proactive_chat/image?custom_description=%F0%9F%92%96+%E8%AE%A9%E4%BD%A0%E7%9A%84+Bot+%E6%8B%A5%E6%9C%89%E4%B8%BB%E5%8A%A8%E5%85%B3%E6%80%80%E7%9A%84%E7%81%B5%E9%AD%82&description=1&font=Inter&forks=1&issues=1&language=1&name=1&owner=1&pattern=Formal+Invitation&pulls=1&stargazers=1&theme=Auto)
+
 <div align="center">
-
-# 为 AstrBot 开发的主动消息插件
-
-# Proactive Chat Plugin for AstrBot
-
-## 让你的 Bot 拥有主动关怀的灵魂
 
 简体中文 | [English](README_EN.md) | [日本語](README_JP.md)
 
 </div>
+
+<p align="center">
+  <img src="assets/PluginRank.svg" alt="Plugin Rank">
+  <img src="assets/StarRank.svg" alt="Star Rank">
+</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-AGPL_3.0-blue.svg" alt="License: AGPL-3.0">
@@ -467,6 +470,7 @@ graph TD
 
 ## 🚧 最新版本的已知限制
 
+- **不支持多实例**: 当前只适配了单个实例的情况，如果你有多台机器人，多出来的机器人将无法正常进行主动消息，而且可能影响插件选择要发送主动消息的机器人实例。如果遇到你期望之外的 Bot 给你发送主动消息，并且插件无法自行更正，请尝试删除插件生成的持久化数据，然后和你想要发送主动消息的那个 Bot 重新聊一下。
 - **配置复杂度与限制**: 初次进行多会话配置时略显繁琐，会话数量超出预设槽位后部分会话无法进行个性化配置，需要进行取舍。
 - **Prompt 依赖**: 主动消息的效果，高度依赖于用户在提示词中提供的创造力和引导。也依赖于私聊/群聊中是否有足够丰富的上下文和 LLM 本身的模型能力。
 - **框架限制**: 由于 AstrBot 本身的限制，部分消息平台可能无法正常使用本插件的功能。
