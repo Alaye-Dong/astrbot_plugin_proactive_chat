@@ -890,8 +890,18 @@ class ProactiveChatPlugin(star.Star):
             )
             return 0
 
+        # 尝试解析 target_id 中是否包含平台信息
+        parsed = self._parse_session_id(target_id)
+        preferred_platform = None
+        real_target_id = target_id
+        if parsed:
+            preferred_platform, _, real_t_id = parsed
+            real_target_id = real_t_id
+
         # 优雅地获取完整的 UMO 喵
-        session_id = self._resolve_full_umo(target_id, message_type)
+        session_id = self._resolve_full_umo(
+            real_target_id, message_type, preferred_platform
+        )
         logger.debug(f"[主动消息] 正在为 {log_str} 设置自动触发器喵。")
         # 在外层函数统一打印完整的日志信息，内层函数静默执行，避免重复
         auto_trigger_minutes = auto_trigger_settings.get(
@@ -904,7 +914,9 @@ class ProactiveChatPlugin(star.Star):
         await self._setup_auto_trigger(session_id, silent=True)
         return 1
 
-    def _resolve_full_umo(self, target_id: str, msg_type: str) -> str:
+    def _resolve_full_umo(
+        self, target_id: str, msg_type: str, preferred_platform: str = None
+    ) -> str:
         """
         动态解析并验证存活的 UMO 喵。
         灵灵会优先确保返回的平台 ID 对应的实例当前处于运行状态。
@@ -918,6 +930,14 @@ class ProactiveChatPlugin(star.Star):
             for p in self.context.platform_manager.get_insts()
             if p.meta().id and "webchat" not in p.meta().id.lower()
         }
+
+        # 0. 优先使用首选平台（如果指定且运行中）
+        if (
+            preferred_platform
+            and preferred_platform in active_insts
+            and active_insts[preferred_platform].status == PlatformStatus.RUNNING
+        ):
+            return f"{preferred_platform}:{msg_type}:{target_id}"
 
         # 1. 优先从历史记录匹配，但必须验证平台依然“运行中”喵
         for existing_id in self.session_data.keys():
@@ -1215,7 +1235,7 @@ class ProactiveChatPlugin(star.Star):
                 next_trigger_time
             )
             logger.info(
-                f"[主动消息] 已为 {self._get_session_log_str(session_id, session_config)} 安排下一次主动聊天喵，时间：{run_date.strftime('%Y-%m-%d %H:%M:%S')} 喵。"
+                f"[主动消息] 已为 {self._get_session_log_str(session_id, session_config)} 安排下一次主动消息喵，时间：{run_date.strftime('%Y-%m-%d %H:%M:%S')} 喵。"
             )
 
             await self._save_data_internal()
@@ -1871,8 +1891,8 @@ class ProactiveChatPlugin(star.Star):
 
     async def _send_chain_with_hooks(self, session_id: str, components: list):
         """
-        发送消息链的终极防御逻辑喵。
-        针对 aiocqhttp 的 ApiNotAvailable 错误，增加了“同类平台安全轮询”机制喵。
+        发送消息链喵。
+        灵灵会严格通过指定的平台发送消息，不再擅自寻找替补喵。
         """
         processed_chain_list = await self._trigger_decorating_hooks(
             session_id, components
@@ -1883,6 +1903,7 @@ class ProactiveChatPlugin(star.Star):
         chain = MessageChain(processed_chain_list)
         parsed = self._parse_session_id(session_id)
         if not parsed:
+            # 这种情况下没有平台信息，只能通过核心 API 盲发喵
             await self.context.send_message(session_id, chain)
             return
 
@@ -1893,73 +1914,30 @@ class ProactiveChatPlugin(star.Star):
             else MessageType.FRIEND_MESSAGE
         )
 
-        # 🚀 灵灵的“铁壁轮询”策略喵！
+        # 灵灵现在会精准定位指定的平台喵！
         platforms = self.context.platform_manager.get_insts()
-        preferred_p = next((p for p in platforms if p.meta().id == p_id), None)
-        # 获取首选平台的适配器类型 (如 aiocqhttp) 喵
-        adapter_type = preferred_p.meta().name if preferred_p else "unknown"
+        target_platform = next((p for p in platforms if p.meta().id == p_id), None)
 
-        # 筛选同类、存活、且不是 WebChat 的备选平台喵
-        candidates = [
-            p
-            for p in platforms
-            if p.meta().name == adapter_type
-            and p.status == PlatformStatus.RUNNING
-            and "webchat" not in (p.meta().id or "").lower()
-        ]
-        # 首选平台排在第一位喵
-        candidates.sort(key=lambda p: 1 if p.meta().id == p_id else 2)
+        if not target_platform:
+            logger.warning(
+                f"[主动消息] 找不到指定的平台 {p_id} 喵，尝试使用核心 API 兜底喵。"
+            )
+            await self.context.send_message(session_id, chain)
+            return
 
-        last_error = None
-        last_traceback = "无详细堆栈"
+        if target_platform.status != PlatformStatus.RUNNING:
+            logger.warning(f"[主动消息] 平台 {p_id} 未运行喵，跳过主动消息喵。")
+            return
 
-        for platform in candidates:
-            curr_p_id = platform.meta().id
-            try:
-                session_obj = MS(
-                    platform_name=curr_p_id, message_type=m_type, session_id=t_id
-                )
-
-                # 针对 aiocqhttp 的连接预检喵
-                if adapter_type == "aiocqhttp":
-                    client = platform.get_client()
-                    # 如果 CQHttp 实例没有活跃的 WebSocket 客户端连接，提前预警喵
-                    if hasattr(client, "clients") and not client.clients:
-                        logger.warning(
-                            f"[主动消息] 预检：平台 {curr_p_id} 目前没有活跃的 WebSocket 客户端连接喵！"
-                        )
-
-                # 尝试通过此健康的平台实例进行发送喵
-                await platform.send_by_session(session_obj, chain)
-                logger.info(
-                    f"[主动消息] 消息将通过平台 {curr_p_id} ({adapter_type}) 送达喵"
-                )
-                return
-
-            except Exception as e:
-                last_error = e
-                last_traceback = (
-                    traceback.format_exc()
-                )  # 在这里捕获，防止在循环外失效喵
-                if "Available" in type(e).__name__:
-                    logger.warning(
-                        f"[主动消息] 平台 {curr_p_id} 暂时不可用 (ApiNotAvailable)，寻找同类替补中喵..."
-                    )
-                else:
-                    logger.debug(f"[主动消息] 尝试平台 {curr_p_id} 时遇到困难: {e} 喵")
-
-        # 最后保底：尝试核心 API 的一搏喵
         try:
-            if await self.context.send_message(session_id, chain):
-                return
+            session_obj = MS(platform_name=p_id, message_type=m_type, session_id=t_id)
+            await target_platform.send_by_session(session_obj, chain)
+            logger.info(f"[主动消息] 消息将通过平台 {p_id} 送达喵")
         except Exception as e:
-            last_error = e
-            last_traceback = traceback.format_exc()
-
-        logger.error(
-            f"[主动消息] ❌ 严重故障：所有匹配的物理平台均不可用喵。异常堆栈:{last_traceback}"
-        )
-        raise last_error or RuntimeError("未找到可用的消息平台用于推送")
+            logger.error(f"[主动消息] 通过平台 {p_id} 发送失败喵: {e}")
+            # 记录详细堆栈
+            logger.debug(traceback.format_exc())
+            # 如果发送失败，不再寻找其他平台，防止误发喵
 
     async def _send_proactive_message(self, session_id: str, text: str):
         """
@@ -2105,7 +2083,7 @@ class ProactiveChatPlugin(star.Star):
                 user_message=user_msg_obj,
                 assistant_message=assistant_msg_obj,
             )
-            logger.info("[主动消息] 已成功将本次主动对话存档至对话历史喵。")
+            logger.info("[主动消息] 已成功将本次主动消息存档至对话历史喵。")
         except Exception as e:
             logger.error(f"[主动消息] 存档对话历史失败喵: {e}")
             # 存档失败时不中断主流程，只记录错误
@@ -2210,8 +2188,37 @@ class ProactiveChatPlugin(star.Star):
             # 在任务执行前，通过活跃平台实例和历史记录动态修正 ID，确保 UMO 的时效性和准确性喵
             parsed = self._parse_session_id(session_id)
             if parsed:
-                _, msg_type, target_id = parsed
-                new_session_id = self._resolve_full_umo(target_id, msg_type)
+                original_platform, msg_type, target_id = parsed
+                # 传入 original_platform 作为首选平台
+                new_session_id = self._resolve_full_umo(
+                    target_id, msg_type, original_platform
+                )
+
+                # 严格检查：如果修正后的平台并未运行，灵灵不应该强行发送喵！
+                new_parsed = self._parse_session_id(new_session_id)
+                if new_parsed:
+                    new_platform = new_parsed[0]
+                    # 获取所有物理实例的状态喵
+                    insts = {
+                        p.meta().id: p
+                        for p in self.context.platform_manager.get_insts()
+                        if p.meta().id
+                    }
+
+                    # 检查平台是否存在且运行
+                    # 只有当平台 ID 在当前实例列表中完全找不到（说明是无效的占位符或已被移除），或者实例未运行时，才拦截
+                    platform_inst = insts.get(new_platform)
+                    if (
+                        not platform_inst
+                        or platform_inst.status != PlatformStatus.RUNNING
+                    ):
+                        logger.warning(
+                            f"[主动消息] 平台 {new_platform} 不存在或未运行（可能已全部停用），跳过主动消息发送喵。"
+                        )
+                        # 重新调度，等待机器人上线喵
+                        await self._schedule_next_chat_and_save(session_id)
+                        return
+
                 if new_session_id != session_id:
                     logger.debug(
                         f"[主动消息] UMO 动态修正: {session_id} -> {new_session_id} 喵"
