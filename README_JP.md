@@ -12,6 +12,7 @@
 <p align="center">
   <img src="assets/PluginRank.svg" alt="Plugin Rank">
   <img src="assets/StarRank.svg" alt="Star Rank">
+  <img src="assets/ShitMountain.svg" alt="ShitMountain">
 </p>
 
 <p align="center">

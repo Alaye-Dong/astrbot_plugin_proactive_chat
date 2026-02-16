@@ -12,6 +12,7 @@
 <p align="center">
   <img src="assets/PluginRank.svg" alt="Plugin Rank">
   <img src="assets/StarRank.svg" alt="Star Rank">
+  <img src="assets/ShitMountain.svg" alt="ShitMountain">
 </p>
 
 <p align="center">
@@ -664,7 +665,7 @@ Welcome to share your usage experience on any platform!
 - [x] **✅ [Completed] Add Time Perception**: Allow the Bot to correctly perceive the current time when initiating proactive messages.
 - [x] **✅ [Completed] Auto Proactive Message**: Solve the problem that the plugin needs to be manually activated after first load, optimizing user experience.
 - [x] **✅ [Completed] Segmented Reply Function**: Supports splitting long text replies into multiple short messages and simulating real typing intervals.
-~~- [ ] **🔵 [New Idea] Scheduled Task Reminder**: Use natural language to set a scheduled task and respond in a way that fits the persona.~~ (Similar and more powerful features have been added since AstrBot v4.14.0, see [Release-v4.14.0](https://github.com/AstrBotDevs/AstrBot/releases/tag/v4.14.0). Therefore, this plugin will not add this feature repeatedly and it will be maintained by the official.)
+~~- [ ] **🔵 [New Idea] Scheduled Task Reminder**: Use natural language to set a scheduled task and respond in a way that fits the persona.~~ (Similar and more powerful features have been added since AstrBot v4.14.0, see [Release-v4.14.0](https://github.com/AstrBotDevs/AstrBot/releases/tag/v4.14.0). Therefore, this plugin will not add this feature repeatedly and it will be maintained by the official AstrBot Team.)
 - [ ] **🟢 [Planned] Modular Refactoring and WebUI**: For details, please refer to the relevant [Issue](https://github.com/DBJD-CR/astrbot_plugin_proactive_chat/issues/21).
 - [ ] **🔵 [New Idea] Additional Proactive Message Tasks**: Add more proactive message prompt slots. To flexibly distinguish scenarios and times, bringing richer proactive message content (can be integrated with the design of `Scheduled Task Reminder`).
 - [ ] **⏳ [Optional] Smarter Trigger Timing**: Introduce the "Flow" concept similar to the [Heartflow](https://github.com/advent259141/Astrbot_plugin_Heartflow) plugin, deciding the trigger timing of proactive messages based on conversation content, rather than just random time.
